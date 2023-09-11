@@ -1,4 +1,4 @@
-package com.hackerrank.springsecurity.dto;
+package com.gaurav.filesearchapiepassi.model;
 
 public class ApiResponse {
     private int statusCode;

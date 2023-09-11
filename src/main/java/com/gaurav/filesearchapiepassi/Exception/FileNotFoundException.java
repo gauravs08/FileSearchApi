@@ -1,8 +1,8 @@
 package com.gaurav.filesearchapiepassi.Exception;
 
-public class LargeFileProcessingException extends RuntimeException {
+public class FileNotFoundException extends RuntimeException {
 
-    public LargeFileProcessingException(String message) {
+    public FileNotFoundException(String message) {
         super(message);
     }
 }

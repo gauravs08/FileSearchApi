@@ -1,7 +1,12 @@
 package com.gaurav.filesearchapiepassi.services;
 
+import com.gaurav.filesearchapiepassi.Exception.FileFormatException;
+import com.gaurav.filesearchapiepassi.Exception.LargeFileProcessingException;
 import com.gaurav.filesearchapiepassi.model.WordFrequency;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
@@ -10,13 +15,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
-public class TextProcessingService {
+@CacheConfig(cacheNames = "wordFrequencyCache")
+public class FileProcessingService {
 
 
+    @Cacheable(key = "{#file.originalFilename, #k}")
     public Mono<List<WordFrequency>> findTopKFrequentWords(MultipartFile file, int k) {
+
+
+        // Check if the uploaded file is a text file based on content type or file extension
+        String contentType = file.getContentType();
+        String fileName = file.getOriginalFilename();
+
+        if (contentType == null || !contentType.startsWith("text/") || !Objects.requireNonNull(fileName).toLowerCase().endsWith(".txt")) {
+            throw new FileFormatException("Uploaded file is not a valid text file.");
+        }
+
         // Create a map to store word frequencies
         Map<String, Integer> wordFrequencyMap = getWordFrequencyMap(file);
 
@@ -26,37 +45,12 @@ public class TextProcessingService {
                 .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
                 .toList();
 
-        // Extract the top K words
-//        List<String> topWords = sortedList.stream()
-//                .limit(k)
-//                .map(Map.Entry::getKey)
-//                .toList();
-
         List<WordFrequency> topWords = sortedList.stream()
                 .limit(k)
                 .map(entry -> new WordFrequency(entry.getKey(), entry.getValue()))
                 .toList();
 
-//        // Create a min-heap (PriorityQueue) to find the top K frequent words
-//        PriorityQueue<Map.Entry<String, Integer>> minHeap = new PriorityQueue<>(
-//                Comparator.comparingInt(Map.Entry::getValue)
-//        );
-//
-//        for (Map.Entry<String, Integer> entry : wordFrequencyMap.entrySet()) {
-//            minHeap.offer(entry);
-//            if (minHeap.size() > k) {
-//                minHeap.poll(); // Remove the least frequent word if heap size exceeds K
-//            }
-//        }
-//
-//        // Create a list to store the top K words and their frequencies
-//        List<WordFrequency> topWords = getWordFrequenciesDescOrder(minHeap);
-//
-//        // Save the top K words and their frequencies in the database
-//        for (WordFrequency wordFrequency : topWords) {
-//            wordFrequencyRepository.save(wordFrequency);
-//        }
-        log.debug("File most frequent words:"+ topWords);
+        log.debug("File most frequent words:" + topWords);
         return Mono.just(topWords);
     }
 
@@ -80,12 +74,7 @@ public class TextProcessingService {
             String line;
             while ((line = reader.readLine()) != null) {
                 // Tokenize the line into words (split by whitespace)
-                String[] words = line.trim().split("\\s+");
-                for (String word : words) {
-                    // Remove punctuation and convert to lowercase for accurate word counting
-                    word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
-                    wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);
-                }
+                processLine(line, wordFrequencyMap);
             }
         } catch (IOException e) {
             // Handle IO exception
@@ -94,5 +83,25 @@ public class TextProcessingService {
         return wordFrequencyMap;
     }
 
+    private static void processLine(String line, Map<String, Integer> wordFrequencyMap) {
+        String[] words = line.trim().split("\\s+");
+        //while ((line = reader.readLine()) != null) {
+//                List<String> words = new ArrayList<>();
+//
+//                // Use a regular expression to match words and exclude tabs and newlines
+//                Pattern pattern = Pattern.compile("\\b\\w+\\b");
+//                Matcher matcher = pattern.matcher(line);
+//
+//                while (matcher.find()) {
+//                    String word = matcher.group();
+//                    // Remove punctuation and convert to lowercase for accurate word counting
+//                    words.add(word.replaceAll("[^a-zA-Z]", "").toLowerCase().trim());
+//                }
+        log.info("WORDS IN LINE :"+ Arrays.stream(words).toList());
+        for (String word : words) {
+            //word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
+            wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);
+        }
+    }
 
 }

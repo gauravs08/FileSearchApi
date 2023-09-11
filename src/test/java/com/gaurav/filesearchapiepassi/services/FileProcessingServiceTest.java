@@ -2,7 +2,6 @@ package com.gaurav.filesearchapiepassi.services;
 import com.gaurav.filesearchapiepassi.model.WordFrequency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +10,6 @@ import reactor.test.StepVerifier;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,16 +18,16 @@ import static org.mockito.Mockito.*;
 
 
 
-public class TextProcessingServiceTest {
+public class FileProcessingServiceTest {
 
     @Autowired
-    private TextProcessingService textProcessingService;
+    private FileProcessingService fileProcessingService;
 
     @BeforeEach
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
-        textProcessingService = new TextProcessingService();
+        fileProcessingService = new FileProcessingService();
     }
 
     @Test
@@ -39,7 +37,7 @@ public class TextProcessingServiceTest {
         when(mockFile.getInputStream()).thenReturn(new ByteArrayInputStream("Hello world, hello world!\n".getBytes()));
 
         // Call the method
-        Mono<List<WordFrequency>> resultMono = textProcessingService.findTopKFrequentWords(mockFile, 5);
+        Mono<List<WordFrequency>> resultMono = fileProcessingService.findTopKFrequentWords(mockFile, 5);
 
         // Create a StepVerifier to test the Mono
         StepVerifier.create(resultMono)
