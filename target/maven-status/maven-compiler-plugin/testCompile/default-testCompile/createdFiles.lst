@@ -1,0 +1,5 @@
+com\gaurav\filesearchapiepassi\services\FileProcessingServiceTest.class
+com\gaurav\filesearchapiepassi\controller\AdminControllerIntegrationTest.class
+com\gaurav\filesearchapiepassi\controller\UserControllerIntegrationTest.class
+com\gaurav\filesearchapiepassi\controller\AdminControllerIntegrationTest$1.class
+com\gaurav\filesearchapiepassi\FileSearchApiApplicationTests.class

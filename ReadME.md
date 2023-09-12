@@ -49,3 +49,23 @@ Below are the specific requirements and bonus points for this assignment:
             - ```/api/users/welcome```
             - ```/actuator/health```
 - **Health Check:** Heath check is also added and status can be tested using ``http://localhost:8080/actuator/health``
+
+## How to run
+
+- **Clone from github:**
+
+    - [How to clone in IntellIJ] (https://www.jetbrains.com/idea/guide/tips/clone-project-from-github/#:~:text=Import%20a%20project%20from%20VCS,be%20created%2C%20and%20click%20Clone.)
+    - Form cmd/terminal
+        - git clone `https://github.com/gauravs08/FileSearchApi.git`
+        - cd FileSearchApi
+    
+-   `mvn clean install`
+-   `java -jar target/file-search-api 0.0.1-SNAPSHOT.jar`
+
+  -   Open postman or any api platform and test 
+      ``http://localhost:8080/actuator/health`` with basic auth user/password
+  should return 
+   
+  - `{
+    "status": "UP"
+    }`
