@@ -69,3 +69,5 @@ Below are the specific requirements and bonus points for this assignment:
   - `{
     "status": "UP"
     }`
+## Demo video
+https://recordit.co/CfwGh3bOz1    
