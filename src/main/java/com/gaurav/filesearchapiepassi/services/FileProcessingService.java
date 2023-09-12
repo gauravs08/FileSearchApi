@@ -1,10 +1,8 @@
 package com.gaurav.filesearchapiepassi.services;
 
 import com.gaurav.filesearchapiepassi.Exception.FileFormatException;
-import com.gaurav.filesearchapiepassi.Exception.LargeFileProcessingException;
 import com.gaurav.filesearchapiepassi.model.WordFrequency;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -15,44 +13,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j
 @CacheConfig(cacheNames = "wordFrequencyCache")
 public class FileProcessingService {
 
-
-    @Cacheable(key = "{#file.originalFilename, #k}")
-    public Mono<List<WordFrequency>> findTopKFrequentWords(MultipartFile file, int k) {
-
-
-        // Check if the uploaded file is a text file based on content type or file extension
-        String contentType = file.getContentType();
-        String fileName = file.getOriginalFilename();
-
-        if (contentType == null || !contentType.startsWith("text/") || !Objects.requireNonNull(fileName).toLowerCase().endsWith(".txt")) {
-            throw new FileFormatException("Uploaded file is not a valid text file.");
-        }
-
-        // Create a map to store word frequencies
-        Map<String, Integer> wordFrequencyMap = getWordFrequencyMap(file);
-
-        // Sort the map by frequency in descending order
-        List<Map.Entry<String, Integer>> sortedList = wordFrequencyMap.entrySet()
-                .stream()
-                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
-                .toList();
-
-        List<WordFrequency> topWords = sortedList.stream()
-                .limit(k)
-                .map(entry -> new WordFrequency(entry.getKey(), entry.getValue()))
-                .toList();
-
-        log.debug("File most frequent words:" + topWords);
-        return Mono.just(topWords);
-    }
 
     private static List<WordFrequency> getWordFrequenciesDescOrder(PriorityQueue<Map.Entry<String, Integer>> minHeap) {
         List<WordFrequency> topWords = new ArrayList<>();
@@ -65,7 +31,6 @@ public class FileProcessingService {
         Collections.reverse(topWords);
         return topWords;
     }
-
 
     private static Map<String, Integer> getWordFrequencyMap(MultipartFile file) {
         Map<String, Integer> wordFrequencyMap = new HashMap<>();
@@ -97,11 +62,41 @@ public class FileProcessingService {
 //                    // Remove punctuation and convert to lowercase for accurate word counting
 //                    words.add(word.replaceAll("[^a-zA-Z]", "").toLowerCase().trim());
 //                }
-        log.info("WORDS IN LINE :"+ Arrays.stream(words).toList());
+        log.info("WORDS IN LINE :" + Arrays.stream(words).toList());
         for (String word : words) {
             //word = word.replaceAll("[^a-zA-Z]", "").toLowerCase();
             wordFrequencyMap.put(word, wordFrequencyMap.getOrDefault(word, 0) + 1);
         }
+    }
+
+    @Cacheable(key = "{#file.originalFilename, #k}")
+    public Mono<List<WordFrequency>> findTopKFrequentWords(MultipartFile file, int k) {
+
+
+        // Check if the uploaded file is a text file based on content type or file extension
+        String contentType = file.getContentType();
+        String fileName = file.getOriginalFilename();
+
+        if (contentType == null || !contentType.startsWith("text/") || !Objects.requireNonNull(fileName).toLowerCase().endsWith(".txt")) {
+            throw new FileFormatException("Uploaded file is not a valid text file.");
+        }
+
+        // Create a map to store word frequencies
+        Map<String, Integer> wordFrequencyMap = getWordFrequencyMap(file);
+
+        // Sort the map by frequency in descending order
+        List<Map.Entry<String, Integer>> sortedList = wordFrequencyMap.entrySet()
+                .stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .toList();
+
+        List<WordFrequency> topWords = sortedList.stream()
+                .limit(k)
+                .map(entry -> new WordFrequency(entry.getKey(), entry.getValue()))
+                .toList();
+
+        log.debug("File most frequent words:" + topWords);
+        return Mono.just(topWords);
     }
 
 }

@@ -1,14 +1,18 @@
 package com.gaurav.filesearchapiepassi.model;
 
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class WordFrequency {
     private String word;
     private int frequency;
 
-    // Getters and setters
+    @JsonCreator
+    public WordFrequency(@JsonProperty("word") String word, @JsonProperty("frequency") int frequency) {
+        this.word = word;
+        this.frequency = frequency;
+    }
 }

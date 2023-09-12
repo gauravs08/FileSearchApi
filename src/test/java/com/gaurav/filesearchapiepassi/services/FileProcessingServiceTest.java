@@ -1,21 +1,23 @@
 package com.gaurav.filesearchapiepassi.services;
+
 import com.gaurav.filesearchapiepassi.model.WordFrequency;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class FileProcessingServiceTest {
@@ -32,22 +34,28 @@ public class FileProcessingServiceTest {
 
     @Test
     public void testFindTopKFrequentWords() throws IOException {
-        // Mock the MultipartFile
-        MultipartFile mockFile = mock(MultipartFile.class);
-        when(mockFile.getInputStream()).thenReturn(new ByteArrayInputStream("Hello world, hello world!\n".getBytes()));
+
+        MultipartFile multipartFile = new MockMultipartFile("file",
+                "test.txt", "text/plain", Files.readAllBytes(Paths.get("src/test/resources/test.txt")));
+
+        // Define the expected WordFrequency objects
+        List<WordFrequency> expectedWordFrequencies = Arrays.asList(
+                new WordFrequency("Hello", 2),
+                new WordFrequency("world", 1),
+                new WordFrequency("file", 1),
+                new WordFrequency("test", 1),
+                new WordFrequency("this", 1)
+        );
+
 
         // Call the method
-        Mono<List<WordFrequency>> resultMono = fileProcessingService.findTopKFrequentWords(mockFile, 5);
+        Mono<List<WordFrequency>> resultMono = fileProcessingService.findTopKFrequentWords(multipartFile, 5);
 
         // Create a StepVerifier to test the Mono
         StepVerifier.create(resultMono)
-                .expectNextMatches(wordFrequencies -> {
-                    // Verify that the expected words and frequencies are in the result
-                    assertEquals(2, wordFrequencies.size());
-                    assertEquals("world", wordFrequencies.get(0).getWord());
-                    assertEquals(2, wordFrequencies.get(0).getFrequency());
-                    assertEquals("hello", wordFrequencies.get(1).getWord());
-                    assertEquals(2, wordFrequencies.get(1).getFrequency());
+                .expectNextMatches(actualWordFrequencies -> {
+                    assertEquals(expectedWordFrequencies.size(), actualWordFrequencies.size());
+                    assertTrue(actualWordFrequencies.containsAll(expectedWordFrequencies));
                     return true;
                 })
                 .expectComplete()

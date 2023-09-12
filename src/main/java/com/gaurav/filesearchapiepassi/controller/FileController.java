@@ -30,13 +30,13 @@ public class FileController {
         return new ResponseEntity<>(new ApiResponse(200, "Hello world!!!"), HttpStatus.OK);
 
     }
+
     @PostMapping(value = "/file/upload")
-    public Mono<List<WordFrequency>> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam int k)  {
+    public Mono<List<WordFrequency>> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam int k) {
         // Validate the file and perform the upload
         if (file.isEmpty()) {
             throw new FileNotFoundException("Please select a file to upload.");
         }
-
         return fileProcessingService.findTopKFrequentWords(file, k);
     }
 
@@ -44,5 +44,4 @@ public class FileController {
     public ResponseEntity<ApiResponse> uploadFile() throws IOException {
         return new ResponseEntity<>(new ApiResponse(200, "UP"), HttpStatus.OK);
     }
-
 }

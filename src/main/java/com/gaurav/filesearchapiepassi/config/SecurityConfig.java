@@ -1,11 +1,10 @@
 package com.gaurav.filesearchapiepassi.config;
 
-import com.gaurav.filesearchapiepassi.handler.CustomAccessDeniedHandler;
 import com.gaurav.filesearchapiepassi.Exception.CustomAuthenticationEntryPoint;
+import com.gaurav.filesearchapiepassi.handler.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,16 +24,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
     // User Creation
     @Bean
-    public UserDetailsService users(AuthenticationManagerBuilder auth) throws Exception {
-
-//        return auth.inMemoryAuthentication()
-//                .withUser("admin")
-//                .password("{noop}password")
-//                .authorities("ROLE_ADMIN_USER")
-//                .and()
-//                .withUser("user")
-//                .password("{noop}password")
-//                .authorities("ROLE_USER");
+    public UserDetailsService users() {
 
         UserDetails user = User.builder()
                 .username("user")
@@ -67,7 +57,6 @@ public class SecurityConfig {
                         .accessDeniedHandler(accessDeniedHandler()));
         return http.build();
     }
-
 
 
     @Bean
