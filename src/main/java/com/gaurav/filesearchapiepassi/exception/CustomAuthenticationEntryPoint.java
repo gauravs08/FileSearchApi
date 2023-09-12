@@ -1,4 +1,4 @@
-package com.gaurav.filesearchapiepassi.Exception;
+package com.gaurav.filesearchapiepassi.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gaurav.filesearchapiepassi.model.ApiResponse;

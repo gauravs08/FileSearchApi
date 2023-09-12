@@ -1,7 +1,7 @@
 package com.gaurav.filesearchapiepassi.handler;
 
-import com.gaurav.filesearchapiepassi.Exception.FileFormatException;
-import com.gaurav.filesearchapiepassi.Exception.FileNotFoundException;
+import com.gaurav.filesearchapiepassi.exception.FileFormatException;
+import com.gaurav.filesearchapiepassi.exception.FileNotFoundException;
 import com.gaurav.filesearchapiepassi.model.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

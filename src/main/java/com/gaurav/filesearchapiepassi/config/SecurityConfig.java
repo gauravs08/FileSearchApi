@@ -1,6 +1,6 @@
 package com.gaurav.filesearchapiepassi.config;
 
-import com.gaurav.filesearchapiepassi.Exception.CustomAuthenticationEntryPoint;
+import com.gaurav.filesearchapiepassi.exception.CustomAuthenticationEntryPoint;
 import com.gaurav.filesearchapiepassi.handler.CustomAccessDeniedHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,7 +49,6 @@ public class SecurityConfig {
                                 requests
                                         .requestMatchers(HttpMethod.POST, "/api/file/upload").hasRole("ADMIN")
                                         .requestMatchers(HttpMethod.GET, "/api/users/welcome").hasAnyRole("ADMIN", "USER")
-                                        .requestMatchers(HttpMethod.GET, "/api/up").hasAnyRole("ADMIN", "USER")
                                         .anyRequest().authenticated())
                 .httpBasic(withDefaults())
                 .exceptionHandling(exception -> exception

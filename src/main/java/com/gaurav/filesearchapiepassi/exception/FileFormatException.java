@@ -1,4 +1,4 @@
-package com.gaurav.filesearchapiepassi.Exception;
+package com.gaurav.filesearchapiepassi.exception;
 
 public class FileFormatException extends RuntimeException {
 

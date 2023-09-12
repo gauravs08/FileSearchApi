@@ -6,9 +6,9 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableCaching
-public class FileSearchApiEpassiApplication {
+public class FileSearchApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(FileSearchApiEpassiApplication.class, args);
+        SpringApplication.run(FileSearchApiApplication.class, args);
     }
 
 }
