@@ -70,4 +70,8 @@ Below are the specific requirements and bonus points for this assignment:
     "status": "UP"
     }`
 ## Demo video
-![Demo recording](https://recordit.co/CfwGh3bOz1)    
+![Demo recording](http://g.recordit.co/CfwGh3bOz1.gif)    
+
+## Test cases
+![image](https://github.com/gauravs08/FileSearchApi/assets/13852359/afd750f1-5108-49a4-a61f-32832fe17d96)
+
